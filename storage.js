@@ -46,7 +46,7 @@ Storage.prototype.createBackup = function (source, data, cb) {
     if (err) return cb(err)
 
     next()
-    function next() {
+    function next () {
       var entry = entries.shift()
       if (!entry) return finalize()
       if (entry.type !== 'file') return next()
@@ -99,7 +99,7 @@ Storage.prototype.deleteBackup = function (key, cb) {
 
     function deleteDirs () {
       var metaDir = path.join(self.path, 'data', feed.key.toString('hex').slice(0, 2))
-      var contDir =path.join(self.path, 'data', content.key.toString('hex').slice(0, 2))
+      var contDir = path.join(self.path, 'data', content.key.toString('hex').slice(0, 2))
       rimraf(metaDir, function (err) {
         if (err) return cb(err)
         rimraf(contDir, cb)

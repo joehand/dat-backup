@@ -22,11 +22,11 @@ var argv = minimist(process.argv.slice(2), {
   boolean: ['remove', 'save', 'serve', 'list'],
   default: {
     'dir': process.cwd(),
-    'import': true,
+    'import': true
   }
 })
 
-var backup = DatBackup(path.join(dir, '.dat-backup'))
+var backup = DatBackup(path.join(argv.dir, '.dat-backup'))
 var importer = null
 
 var output = ['', '']
@@ -46,7 +46,7 @@ if (argv.remove) {
     exit()
   })
 } else if (argv.create) {
-  if (!argv.name) return exit('Please use --name option to save archive.')
+  if (!argv.name) exit('Please use --name option to save archive.')
 
   output[0] = 'Reading archive in ' + argv.dir
   readArchive(function (err, archive) {
@@ -54,8 +54,8 @@ if (argv.remove) {
     backup.add(archive, {name: argv.name}, argv, function (err, dest) {
       if (err) return exit(err)
       output[0] = 'Created backup archive:'
-      output[1] =  '  ' + argv.name + '\n  ' + dest.key.toString('hex')
-      return exit()
+      output[1] = '  ' + argv.name + '\n  ' + dest.key.toString('hex')
+      exit()
     })
   })
 } else {

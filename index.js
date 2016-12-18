@@ -1,4 +1,3 @@
-var path = require('path')
 var archiverServer = require('archiver-server')
 var Storage = require('./storage')
 
