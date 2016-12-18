@@ -10,7 +10,7 @@
     "archiver-server": "^2.0.4",
     "dat-node": "^1.0.0-alpha-2.2.0",
     "hypercore": "^4.15.1",
-    "hypercore-archiver": "^3.0.2",
+    "hypercore-archiver": "joehand/hypercore-archiver#change-data",
     "hyperdrive": "^7.12.1",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
