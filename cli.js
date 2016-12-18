@@ -101,7 +101,7 @@ if (argv.remove) {
   }
 
   if (!argv.list && !argv.serve) {
-    exit('No Command Found')
+    require('./usage')()
   }
 }
 
