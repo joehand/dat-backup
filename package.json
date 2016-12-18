@@ -1,0 +1,29 @@
+{
+  "name": "dat-backup",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "dat-backup": "cli.js"
+  },
+  "dependencies": {
+    "archiver-server": "^2.0.4",
+    "dat-node": "^1.0.0-alpha-2.2.0",
+    "hypercore": "^4.15.1",
+    "hypercore-archiver": "^3.0.2",
+    "hyperdrive": "^7.12.1",
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
+    "pump": "^1.0.1",
+    "random-access-file": "^1.3.1",
+    "rimraf": "^2.5.4",
+    "status-logger": "^3.0.0",
+    "stream-each": "^1.2.0"
+  },
+  "devDependencies": {
+    "standard": "^8.4.0"
+  },
+  "scripts": {
+    "test": "standard"
+  }
+}
