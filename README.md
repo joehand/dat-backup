@@ -24,7 +24,7 @@ In a directory with an existing Dat archive (created with the Dat CLI), run:
 dat-backup --create --name "First Backup"
 ```
 
-The files will be copied to the a `.dat-backup` inside the folder and a static link will be printed. That link reflects the hash of the contents.
+The files will be copied to a `.dat-backup` folder inside your archive folder and a static link will be printed. That link reflects the hash of the contents.
 
 ### Sharing & Listing Backups
 
