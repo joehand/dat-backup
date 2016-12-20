@@ -19,7 +19,7 @@ var argv = minimist(process.argv.slice(2), {
     'create': 'c',
     'remove': 'r'
   },
-  boolean: ['remove', 'save', 'serve', 'list'],
+  boolean: ['remove', 'save', 'serve', 'list', 'import'],
   default: {
     'dir': process.cwd(),
     'import': true
@@ -101,7 +101,7 @@ if (argv.remove) {
   }
 
   if (!argv.list && !argv.serve) {
-    require('./usage')()
+    require('./lib/usage')()
   }
 }
 

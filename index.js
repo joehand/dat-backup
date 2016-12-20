@@ -1,5 +1,5 @@
 var archiverServer = require('archiver-server')
-var Storage = require('./storage')
+var Storage = require('./lib/storage')
 
 module.exports = datBackup
 

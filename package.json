@@ -1,7 +1,7 @@
 {
   "name": "dat-backup",
-  "version": "0.0.0",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Create copies of an archive with names and static links.",
   "main": "index.js",
   "bin": {
     "dat-backup": "cli.js"
