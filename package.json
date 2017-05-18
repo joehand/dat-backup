@@ -1,24 +1,13 @@
 {
   "name": "dat-backup",
   "version": "1.0.0",
-  "description": "Create copies of an archive with names and static links.",
+  "description": "Create copy of an archive to local folder.",
   "main": "index.js",
-  "bin": {
-    "dat-backup": "cli.js"
-  },
   "dependencies": {
-    "archiver-server": "^2.0.4",
-    "dat-node": "^1.0.0-alpha-2.2.0",
-    "hypercore": "^4.15.1",
-    "hypercore-archiver": "joehand/hypercore-archiver#change-data",
-    "hyperdrive": "^7.12.1",
-    "minimist": "^1.2.0",
-    "mkdirp": "^0.5.1",
-    "pump": "^1.0.1",
-    "random-access-file": "^1.3.1",
-    "rimraf": "^2.5.4",
-    "status-logger": "^3.0.0",
-    "stream-each": "^1.2.0"
+    "dat-node": "^3.3.1",
+    "os-homedir": "^1.0.2",
+    "through2": "^2.0.3",
+    "thunky": "^1.0.2"
   },
   "devDependencies": {
     "standard": "^8.4.0"
