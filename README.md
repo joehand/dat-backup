@@ -37,7 +37,7 @@ backup.ready(function (err) {
 
 ## API
 
-### `var backup = createBackup(source, [opts])
+### `var backup = createBackup(source, [opts])`
 
 `source` is either a hyperdrive `archive` or dat-node instanace, `dat`.
 
