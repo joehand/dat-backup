@@ -1,74 +1,73 @@
 # dat-backup
 
-Create and share static backups of an archive with a name and a static link.
+Backup a dat to local storage. Useful for:
 
-#### Features
-
-* A backup is a snapshot of the files at the current state.
-* A backup has a static link, based on the files contents (i.e. if you backup the files without changing them you'll only get one backup).
-* Backups can be shared over the network like normal Dat archives.
-* You can get a hypercore feed of the backup links and share that over the Dat network.
-* dat-backup uses [hypercore-archiver](https://github.com/mafintosh/hypercore-archiver) for storage.
+* Storing full history
+* Creating local backups of data (good for offline backups!)
+* More efficient storage (all content, latest and historic, is stored as a single `content.data` file)
 
 ## Usage
 
+A dat backup is good for situations where an archive is only storing the `latest` content but you want to keep historic version of content around locally, either temporarily or permanently.
+
+```js
+var createBackup = require('dat-backup')
+
+var archive = hyperdrive('/dir', {latest: true}) // some existing archive or dat-node instance
+
+// default dir is ~/.dat/backups/<discovery-key>
+var backup = createBackup(archive, {dir: '/big-hd/' + archive.discoveryKey.toString('hex')})
+
+backup.ready(function (err) {
+  if (err) throw err
+
+  // backup archive at current version
+  backup.add(function () {
+  	console.log('archive backed up at version: ', archive.version)
+  })
+
+  // List all file versions available in archive backup
+  var stream = backup.list()
+  stream.on('data', function (data) {
+  	console.log('filename   :    mtime   :   archive version')
+  	console.log(data.name, data.value.mtime, data.version)
+  })
+})
 ```
-npm install -g dat-backup
-```
-
-### Creating a Backup
-
-In a directory with an existing Dat archive (created with the Dat CLI), run:
-
-```
-dat-backup --create --name "First Backup"
-```
-
-The files will be copied to a `.dat-backup` folder inside your archive folder and a static link will be printed. That link reflects the hash of the contents.
-
-### Sharing & Listing Backups
-
-Once you've created backups of an archive, you can share then. In the folder where you Dat archive is run:
-
-```
-dat-backup --list --serve
-```
-
-This will list all of your backups and serve them over the dat network. You can use the regular Dat CLI to download the backups elsewhere (or to another folder on your own machine).
-
-### Removing Backups
-
-Don't want to share a backup anymore? Remove it! Use `--delete` to also delete the files from your hard drive.
-
-```
-dat-backup --remove --key <key> --delete
-```
-
-The backup will no longer be shared over the network when you run `dat-backup --serve`.
-
-*Tip: Run `dat-backup -l,--list` to see the list of backups and get the key.*
 
 ## API
 
-### `var backup = datBackup(dir, [opts])`
+### `var backup = createBackup(source, [opts])
 
-Backup files and the database will be placed into `dir`.
+`source` is either a hyperdrive `archive` or dat-node instanace, `dat`.
 
-### `backup.add(archive, data, [opts], cb)`
+Options are:
 
-Create a backup of a source hyperdrive archive, `archive`. Data will be added to the database with the key. Useful for storing things like the name of the backup.
+* `opts.dir`: where to store backups, defaults to `~/.dat/backup/discKey.slice(0, 2), discKey.slice(2)`
 
-### `backup.remove(key, [opts], cb)`
+#### `backup.ready()`
 
-Remove a backup from the database. Use `opts.delete` to also delete the files.
+Initalize the backup and make sure it is ready for adding, etc. This is often called automatically but for sync commands you may need to call it first, e.g. `backup.list()`.
 
-### `backup.list(cb)`
+#### `backup.add([opts], cb)`
 
-Get the changes feed stream and key: `cb(err, stream, key)`.
+Create a new backup of the archive at current version. Will backup *all content* available in the current archive, but not any remote archives. `callback` will be called when finished, unless live.
 
-### `backup.serve()`
+Options are:
 
-Serve all backup archive and the changes feed on the dat network.
+* `opts.live`: Do a live backup, backing up content as it is updated. Will not callback.
+
+#### `backup.remove(cb)`
+
+TODO: remove archive version or versions from local backup.
+
+#### `var stream = backup.list()`
+
+List all data available in backup. Streams a list of files from `archive.history()` if they are backed up.
+
+#### `backup.serve()`
+
+Serve data from a backup. This will allow users to download any data that is backed up.
 
 ## License
 
