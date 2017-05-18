@@ -27,7 +27,8 @@ function datBackup (source, opts) {
   backup.remove = remove
   backup.list = list
   backup.serve = serve
-  backup.create = thunky(_create)
+  backup.ready = thunky(_create)
+  backup.ready()
 
   return backup
 
@@ -41,12 +42,15 @@ function datBackup (source, opts) {
   }
 
   function add (opts, cb) {
-    if (!backup.dat) return backup.create(function (err) {
-      if (err) return cb(err)
-      add(opts, cb)
-    })
-    // TODO: add tagability
+    if (!backup.dat) {
+      return backup.ready(function (err) {
+        if (err) return cb(err)
+        add(opts, cb)
+      })
+    }
     if (typeof opts === 'function') cb = opts
+
+    // TODO: add tagability
     var stream = backup.dat.archive.replicate({live: opts.live})
     stream.on('end', cb)
     stream.on('error', cb)
@@ -59,7 +63,8 @@ function datBackup (source, opts) {
   }
 
   function list () {
-    if (!backup.dat) return backup.create(list)
+    if (!backup.dat) throw new Error('Run backup.ready first')
+
     var filter = through.obj(function (chunk, enc, cb) {
       if (!chunk.value) return cb(null, null)
       // TODO: don't print any dirs
@@ -78,7 +83,7 @@ function datBackup (source, opts) {
   }
 
   function serve () {
-    if (!backup.dat) return backup.create(serve)
+    if (!backup.dat) return backup.ready(serve)
     // only want to replicate from local, otherwise may download old versions + pollute local storage
     backup.dat.joinNetwork({download: false})
   }
