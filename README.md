@@ -57,13 +57,17 @@ Options are:
 
 * `opts.live`: Do a live backup, backing up content as it is updated. Will not callback.
 
-#### `backup.remove(cb)`
+#### `backup.remove(start, [end], cb)`
 
-TODO: remove archive version or versions from local backup.
+Remove archive version(s) from local backup.
 
-#### `var stream = backup.list()`
+Start and end have the following properties: `{version: 0}`. `end.version` defaults to `start.version + 1`.
 
-List all data available in backup. Streams a list of files from `archive.history()` if they are backed up.
+You can also pass *content* block numbers directly (equivilant to `archive.content.clear(start, end, cb)`).
+
+#### `var stream = backup.list([opts])`
+
+List all data available in backup. Streams a list of files from `archive.history()` if they are backed up. `opts` are passed to `archive.history`.
 
 #### `backup.serve()`
 

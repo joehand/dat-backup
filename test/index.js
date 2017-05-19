@@ -19,18 +19,31 @@ test('create backup, add file, and list', function (t) {
         stream.on('data', function (data) {
           t.same(data.name, '/hello.txt')
           t.same(data.version, archive.version, 'file version okay')
-          end()
+          remove()
         })
         stream.on('error', function (err) {
           t.error(err, 'no error')
         })
       })
-    })
 
-    function end () {
-      cleanup(function () {
-        t.end()
-      })
-    }
+      function remove () {
+        backup.remove({version: 0}, {version: archive.version}, function (err) {
+          t.error(err, 'no error')
+
+          var stream = backup.list()
+          stream.on('data', function () {
+            t.fail('should not have any data')
+          })
+          stream.on('end', function () {
+            cleanup(function () {
+              t.end()
+            })
+          })
+          stream.on('error', function (err) {
+            t.error(err, 'no error')
+          })
+        })
+      }
+    })
   })
 })

@@ -3,6 +3,7 @@ var path = require('path')
 var homedir = require('os-homedir')
 var thunky = require('thunky')
 var through = require('through2')
+var each = require('stream-each')
 var Dat = require('dat-node')
 
 module.exports = datBackup
@@ -50,21 +51,56 @@ function datBackup (source, opts) {
     }
     if (typeof opts === 'function') cb = opts
 
-    // TODO: add tagability
     var stream = backup.dat.archive.replicate({live: opts.live})
     stream.on('end', cb)
     stream.on('error', cb)
     stream.pipe(archive.replicate()).pipe(stream)
   }
 
-  function remove (cb) {
-    // TODO!
-    cb(new Error('not implemented'))
+  function remove (start, end, cb) {
+    if (!backup.dat) {
+      return backup.ready(function (err) {
+        if (err) return cb(err)
+        remove(opts, cb)
+      })
+    }
+    if (typeof end === 'function') {
+      cb = end
+      end = null
+    }
+
+    var content = backup.dat.archive.content
+    if (typeof start === 'object') {
+      if (start.version === null) return cb(new Error('dat-backup: use {version: Number} to remove a version from backup.'))
+      return clearVersions()
+    }
+    // Otherwise clear block nums
+    content.clear(start, end, cb)
+
+    function clearVersions () {
+      // clear start.version -> end.version
+      var endVer = end.version || start.version + 1
+      var first = archive.tree.checkout(start.version, {cached: true})
+      var second = archive.tree.checkout(endVer, {cached: true})
+      var stream = first.diff(second, {dels: false, puts: true})
+
+      each(stream, ondata, cb)
+
+      function ondata (data, next) {
+        var st = data.value
+        content.cancel(st.offset, st.offset + st.blocks)
+        // TODO: why is byteOffset passed here https://github.com/mafintosh/hyperdrive/blob/master/index.js#L253
+        content.clear(st.offset, st.offset + st.blocks, {byteOffset: st.byteOffset, byteLength: st.size}, next)
+      }
+    }
   }
 
-  function list () {
+  function list (opts) {
     if (!backup.dat) throw new Error('Run backup.ready first')
+    opts = Object.assign({}, opts)
 
+    opts.cached = true
+    var stream = backup.dat.archive.history(opts) // TODO: use dat.archive (backup) or source?
     var filter = through.obj(function (chunk, enc, cb) {
       if (!chunk.value) return cb(null, null)
       // TODO: don't print any dirs
@@ -78,7 +114,7 @@ function datBackup (source, opts) {
       if (missing) return cb(null, null)
       cb(null, chunk)
     })
-    var stream = backup.dat.archive.history() // TODO: use dat.archive (backup) or source?
+
     return stream.pipe(filter)
   }
 
