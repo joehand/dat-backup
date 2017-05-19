@@ -51,6 +51,7 @@ function datBackup (source, opts) {
       })
     }
     if (typeof opts === 'function') cb = opts
+    if (!opts) opts = {}
 
     var stream = backup.dat.archive.replicate({live: opts.live})
     stream.on('end', cb)
@@ -79,9 +80,9 @@ function datBackup (source, opts) {
     content.clear(start, end, cb)
 
     function clearVersions () {
-      // clear start.version -> end.version
-      var endVer = end.version || start.version + 1
-      var first = archive.tree.checkout(start.version, {cached: true})
+      var startVer = start.version - 1 // diff uses version - 1 to get blocks we need
+      var endVer = end.version || start.version
+      var first = archive.tree.checkout(startVer, {cached: true})
       var second = archive.tree.checkout(endVer, {cached: true})
       var stream = first.diff(second, {dels: false, puts: true})
 
