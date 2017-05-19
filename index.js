@@ -4,6 +4,7 @@ var homedir = require('os-homedir')
 var thunky = require('thunky')
 var through = require('through2')
 var each = require('stream-each')
+var collect = require('stream-collector')
 var Dat = require('dat-node')
 
 module.exports = datBackup
@@ -95,8 +96,12 @@ function datBackup (source, opts) {
     }
   }
 
-  function list (opts) {
+  function list (opts, cb) {
     if (!backup.dat) throw new Error('Run backup.ready first')
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = null
+    }
     opts = Object.assign({}, opts)
 
     opts.cached = true
@@ -115,7 +120,7 @@ function datBackup (source, opts) {
       cb(null, chunk)
     })
 
-    return stream.pipe(filter)
+    return collect(stream.pipe(filter), cb)
   }
 
   function serve () {

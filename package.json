@@ -6,6 +6,7 @@
   "dependencies": {
     "dat-node": "^3.3.1",
     "os-homedir": "^1.0.2",
+    "stream-collector": "^1.0.1",
     "stream-each": "^1.2.0",
     "through2": "^2.0.3",
     "thunky": "^1.0.2"

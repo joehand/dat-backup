@@ -27,10 +27,9 @@ backup.ready(function (err) {
   })
 
   // List all file versions available in archive backup
-  var stream = backup.list()
-  stream.on('data', function (data) {
-  	console.log('filename   :    mtime   :   archive version')
-  	console.log(data.name, data.value.mtime, data.version)
+  backup.list(function (err, files) {
+    if (err) throw err
+    console.log(files)
   })
 })
 ```
@@ -65,9 +64,11 @@ Start and end have the following properties: `{version: 0}`. `end.version` defau
 
 You can also pass *content* block numbers directly (equivilant to `archive.content.clear(start, end, cb)`).
 
-#### `var stream = backup.list([opts])`
+#### `var stream = backup.list([opts], [cb])`
 
 List all data available in backup. Streams a list of files from `archive.history()` if they are backed up. `opts` are passed to `archive.history`.
+
+If `cb` is provided, stream will collect the list and callback with `(err, list)`.
 
 #### `backup.serve()`
 

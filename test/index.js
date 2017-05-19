@@ -30,17 +30,12 @@ test('create backup, add file, and list', function (t) {
         backup.remove({version: 0}, {version: archive.version}, function (err) {
           t.error(err, 'no error')
 
-          var stream = backup.list()
-          stream.on('data', function () {
-            t.fail('should not have any data')
-          })
-          stream.on('end', function () {
+          backup.list(function (err, list) {
+            t.error(err, 'no error')
+            t.ok(list.length === 0, 'no data in backup')
             cleanup(function () {
               t.end()
             })
-          })
-          stream.on('error', function (err) {
-            t.error(err, 'no error')
           })
         })
       }
