@@ -5,6 +5,7 @@ var thunky = require('thunky')
 var through = require('through2')
 var each = require('stream-each')
 var collect = require('stream-collector')
+var pump = require('pump')
 var Dat = require('dat-node')
 
 module.exports = datBackup
@@ -53,10 +54,8 @@ function datBackup (source, opts) {
     if (typeof opts === 'function') cb = opts
     if (!opts) opts = {}
 
-    var stream = backup.dat.archive.replicate({live: opts.live})
-    stream.on('end', cb)
-    stream.on('error', cb)
-    stream.pipe(archive.replicate()).pipe(stream)
+    var stream = backup.dat.archive.replicate({live: false})
+    pump(stream, archive.replicate({live: false}), stream, cb)
   }
 
   function remove (start, end, cb) {
